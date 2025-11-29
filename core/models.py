@@ -36,16 +36,17 @@ class Trigger(models.Model):
     def __str__(self):
         return f"Trigger for {self.event_type} (>{self.threshold})"
 
-
 class ExecutionLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    playbook = models.ForeignKey(Playbook, on_delete=models.SET_NULL, null=True)
+    playbook = models.ForeignKey(Playbook, on_delete=models.SET_NULL, null=True, blank=True)
+    event = models.ForeignKey('EventLog', on_delete=models.SET_NULL, null=True, blank=True)  # <-- note les quotes
     action = models.CharField(max_length=100)
     status = models.CharField(max_length=50)
     details = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.timestamp} – {self.action} – {self.status}"
+
 
 class EventLog(models.Model):
     source = models.CharField(max_length=255)

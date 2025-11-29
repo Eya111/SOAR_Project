@@ -1,0 +1,36 @@
+1️⃣ Logs existants
+
+Pour voir les anciens logs (tous les événements déjà passés) :
+
+from core.models import ExecutionLog
+
+for log in ExecutionLog.objects.all().order_by('timestamp'):
+    print(log.timestamp, log.action, log.status, log.details)
+
+
+***On  peux filtrer par événement ou par playbook  :
+
+# Logs d'un événement précis
+logs = ExecutionLog.objects.filter(event_id=17)
+for log in logs:
+    print(log.timestamp, log.action, log.status, log.details)
+
+# Logs d'un playbook précis
+logs = ExecutionLog.objects.filter(playbook__name="Blocage IP suspecte")
+
+
+2️⃣ Nouveaux logs automatiques
+
+Chaque fois que tu exécutes collect_event, analyze_event, check_triggers ou run_playbook, un nouveau ExecutionLog est créé.
+
+Donc, si ton worker Celery est toujours en fonctionnement, tu verras automatiquement :
+
+Les logs apparaissent dans la base (ExecutionLog.objects.all())
+
+Et dans le terminal Celery (INFO/MainProcess ...)
+
+3️⃣ Conseils pratiques
+
+Si tu veux toujours voir les logs en temps réel, tu peux garder le worker Celery ouvert et regarder le terminal.
+
+Pour un historique complet, tu utilises simplement ExecutionLog.objects.all()
