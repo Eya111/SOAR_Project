@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+    <h1 class="mb-4">
+        <i class="bi bi-shield-exclamation"></i>
+        Liste des événements SOAR
+    </h1>
+
+    <!-- Filtre par sévérité -->
+    <form method="get" class="mb-3 d-flex align-items-center gap-2">
+        <label class="fw-bold">Filtrer :</label>
+        <select name="severity" class="form-select w-auto" onchange="this.form.submit()">
+            <option value="">Toutes</option>
+            <option value="HIGH" {% if request.GET.severity == "HIGH" %}selected{% endif %}>HIGH</option>
+            <option value="MEDIUM" {% if request.GET.severity == "MEDIUM" %}selected{% endif %}>MEDIUM</option>
+            <option value="LOW" {% if request.GET.severity == "LOW" %}selected{% endif %}>LOW</option>
+        </select>
+    </form>
+
+    <table class="table table-hover table-bordered shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Sévérité</th>
+                <th>Message</th>
+                <th class="text-end">Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr class="
+                {% if event.severity == 'HIGH' %}table-danger
+                {% elif event.severity == 'MEDIUM' %}table-warning
+                {% elif event.severity == 'LOW' %}table-success
+                {% else %}table-secondary{% endif %}
+            ">
+                <td>{{ event.id }}</td>
+                <td>{{ event.event_type }}</td>
+
+                <td>
+                    {% if event.severity == "HIGH" %}
+                        <span class="badge bg-danger">HIGH</span>
+                    {% elif event.severity == "MEDIUM" %}
+                        <span class="badge bg-warning text-dark">MEDIUM</span>
+                    {% elif event.severity == "LOW" %}
+                        <span class="badge bg-success">LOW</span>
+                    {% else %}
+                        <span class="badge bg-secondary">-</span>
+                    {% endif %}
+                </td>
+
+                <td>{{ event.message }}</td>
+                <td class="text-end">
+                    {{ event.timestamp|date:"M d, Y – H:i" }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    Aucun événement trouvé.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}
